@@ -25,8 +25,12 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:${{ github.sha }} && \
               docker push ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:latest
 
+  deploy:
+    needs: [build]
+
+    steps:
       - name: ssh and deploy
-        uses: appleboy/ssh-action@v1.0.6
+        uses: appleboy/ssh-action@v1.0.4
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
