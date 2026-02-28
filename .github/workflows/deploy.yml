@@ -28,6 +28,8 @@ jobs:
   deploy:
     needs: [build]
 
+    runs-on: ubuntu-latest
+
     steps:
       - name: ssh and deploy
         uses: appleboy/ssh-action@v1.0.4
