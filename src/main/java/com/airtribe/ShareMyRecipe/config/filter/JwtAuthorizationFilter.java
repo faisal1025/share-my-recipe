@@ -26,7 +26,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             "/api/v1/chefs/auth/**",
             "/api/v1/users/auth/**",
             "/api/v1/admins/auth/**",
-            "/h2-console/**"
+            "/h2-console/**",
+            "/actuator/health"
     );
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
