@@ -14,28 +14,52 @@ jobs:
       - name: pull to vm
         uses: actions/checkout@v6
 
+      - name: create docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:${{ github.sha }} . \
+          -t ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:latest .
+
+      - name: docker login
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: docker hub push
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:${{ github.sha }} && \
+              docker push ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:latest
+
       - name: ssh and deploy
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.0.6
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: | 
-            cd /home/ubuntu/app/share-my-recipe/
-            
-            git pull origin main
+            docker pull ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:${{ github.sha }}
   
-  
-            echo "DB_URL=${{ secrets.DB_URL }}" > .env
-            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-            echo "SPRING_PROFILES_ACTIVE=prod" >> .env  
-            echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
-            echo "AWS_BUCKET_SECRET_KEY=${{ secrets.AWS_BUCKET_SECRET_KEY }}" >> .env
-            echo "AWS_BUCKET_REGION=${{ secrets.AWS_BUCKET_REGION }}" >> .env
-            echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> .env
-            echo "AWS_BUCKET_ACCESS_KEY=${{ secrets.AWS_BUCKET_ACCESS_KEY }}" >> .env
+            docker stop app || true
             
-            docker compose down
-            docker compose up -d --build
+            docker rm app || true
+            
+            docker run -d -p 8080:8080 \
+            -e DB_URL=${{ secrets.DB_URL }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e SPRING_PROFILES_ACTIVE=prod \
+            -e AWS_BUCKET_SECRET_KEY=${{ secrets.AWS_BUCKET_SECRET_KEY }} \
+            -e AWS_BUCKET_REGION=${{ secrets.AWS_BUCKET_REGION }} \
+            -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
+            -e AWS_BUCKET_ACCESS_KEY=${{ secrets.AWS_BUCKET_ACCESS_KEY }} \
+            -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+             --name app ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:${{ github.sha }}
+            
+#            echo "DB_URL=${{ secrets.DB_URL }}" > .env
+#            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+#            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+#            echo "SPRING_PROFILES_ACTIVE=prod" >> .env
+#            echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+#            echo "AWS_BUCKET_SECRET_KEY=${{ secrets.AWS_BUCKET_SECRET_KEY }}" >> .env
+#            echo "AWS_BUCKET_REGION=${{ secrets.AWS_BUCKET_REGION }}" >> .env
+#            echo "AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }}" >> .env
+#            echo "AWS_BUCKET_ACCESS_KEY=${{ secrets.AWS_BUCKET_ACCESS_KEY }}" >> .env
+#
+#            docker compose down
+#            docker compose up -d --build
