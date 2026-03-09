@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 
+@Profile({"prod", "dev"})
 @Configuration
 public class OpenApiConfig {
 
