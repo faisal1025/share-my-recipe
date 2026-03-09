@@ -66,3 +66,5 @@ HELP.md
 
 # Key
 *.pem
+
+application-dev.properties
