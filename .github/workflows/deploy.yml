@@ -43,7 +43,8 @@ jobs:
             
             docker rm app || true
             
-            docker run -d --restart unless-stopped -p 127.0.0.1:8080:8080 \
+            docker run -d --restart unless-stopped -p 127.0.0.1:${{ secrets.SERVER_PORT }}:${{ secrets.DOCKER_PORT }} \
+            -e APP_PORT=${{ secrets.DOCKER_PORT }} \
             -e DB_URL=${{ secrets.DB_URL }} \
             -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \

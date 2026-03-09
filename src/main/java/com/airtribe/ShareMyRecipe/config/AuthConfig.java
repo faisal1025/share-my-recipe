@@ -16,12 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import software.amazon.awssdk.auth.credentials.*;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3AsyncClient;
-import software.amazon.awssdk.services.s3.S3Client;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 
 @Configuration
+@EnableWebMvc
 @EnableMethodSecurity
 public class AuthConfig {
 
