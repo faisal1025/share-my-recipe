@@ -39,7 +39,7 @@ The application demonstrates enterprise-level Spring Boot development with secur
 3. **spring-boot-starter-security** - Security framework
 4. **spring-boot-starter-validation** - Request validation
 5. **spring-boot-starter-actuator** - Application monitoring and health checks
-6. **spring-boot-starter-mail** - Email verification functionality
+6. **spring-boot-starter-mail** - Email service using JavaMailSender interface
 
 ### Security & Authentication
 - **JWT (JSON Web Tokens)** - Token-based authentication
@@ -55,6 +55,12 @@ The application demonstrates enterprise-level Spring Boot development with secur
 - **AWS S3** - File storage for recipe images
 - **AWS EC2** - Application hosting
 - **AWS RDS** - Managed MySQL database
+
+### Email Service
+- **JavaMailSender** - Spring's email abstraction interface
+- **SMTP Configuration** - Gmail SMTP integration
+- **Email Verification System** - Token-based email verification for user/chef registration
+- **Verification Tokens** - Secure, time-limited tokens for account activation
 
 ### Documentation & Testing
 - **Springdoc OpenAPI (Swagger)** - Interactive API documentation
@@ -401,4 +407,3 @@ Contributions, issues, and feature requests are welcome!
 ## 📞 Support
 
 For support and queries, please check the API documentation at `/docs` endpoint.
-
