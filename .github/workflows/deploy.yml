@@ -54,6 +54,10 @@ jobs:
             -e AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} \
             -e AWS_BUCKET_ACCESS_KEY=${{ secrets.AWS_BUCKET_ACCESS_KEY }} \
             -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            -e SPRING_MAIL_PASSWORD=${{ secrets.SPRING_MAIL_PASSWORD }} \
+            -e SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }} \
+            -e SPRING_MAIL_HOST=${{ secrets.SPRING_MAIL_HOST }} \
+            -e SPRING_MAIL_PORT=${{ secrets.SPRING_MAIL_PORT }} \
             --name app ${{ secrets.DOCKER_USERNAME }}/share-my-recipe-api:${{ github.sha }}
             
 #            echo "DB_URL=${{ secrets.DB_URL }}" > .env
