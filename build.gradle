@@ -20,7 +20,8 @@ repositories {
 }
 
 dependencies {
-	// Use springdoc-openapi starter for Spring Boot 3 (try 2.6.0)
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+	// Use springdoc-openapi starter for Spring Boot 3 (try 2.8.0)
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0'
 	implementation 'io.projectreactor:reactor-core'
 	implementation("software.amazon.awssdk:s3:2.20.0")

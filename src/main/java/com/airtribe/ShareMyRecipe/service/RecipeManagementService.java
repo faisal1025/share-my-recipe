@@ -137,12 +137,13 @@ public class RecipeManagementService {
         return chefRepository.save(chef.get());
     }
 
-    public List<Recipe> getRecipeByChefId(Long chefId) {
+    public List<RecipeDto> getRecipeByChefId(Long chefId) throws ChefNotFoundException {
         Optional<Chef> optionalChef = chefRepository.findById(chefId);
         if (optionalChef.isEmpty()) {
-            return List.of();
+            throw new ChefNotFoundException("Chef not found with id: "+chefId);
         }
         Chef chef = optionalChef.get();
-        return chef.getRecipes();
+        List<Recipe> recipes = chef.getRecipes();
+        return recipes.stream().map(RecipeDto::new).toList();
     }
 }
