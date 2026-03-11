@@ -1,6 +1,7 @@
 package com.airtribe.ShareMyRecipe.controller;
 
 
+import com.airtribe.ShareMyRecipe.dto.recipe.response.RecipeDto;
 import com.airtribe.ShareMyRecipe.entity.Chef;
 import com.airtribe.ShareMyRecipe.entity.Recipe;
 import com.airtribe.ShareMyRecipe.exception.chef.ChefNotFoundException;
@@ -18,12 +19,6 @@ public class RecipeController {
     @Autowired
     private RecipeManagementService recipeManagementService;
 
-    @PostMapping("/chef/{chefId}/recipes")
-    public Chef createAndAssignRecipes(@PathVariable Long chefId, @RequestBody List<Recipe> recipes) throws ChefNotFoundException{
-        return recipeManagementService.createAndAssignRecipesToChef(chefId, recipes);
-    }
-
-
 
     @PostMapping("/chef/assign")
     public Recipe assignRecipeToChef(@RequestParam("chefId") Long chefId,
@@ -33,7 +28,7 @@ public class RecipeController {
     }
 
     @GetMapping("/chef/{chefId}/recipe")
-    public List<Recipe> getRecipe(@PathVariable Long chefId) {
+    public List<RecipeDto> getRecipe(@PathVariable Long chefId) throws ChefNotFoundException {
         return recipeManagementService.getRecipeByChefId(chefId);
     }
 

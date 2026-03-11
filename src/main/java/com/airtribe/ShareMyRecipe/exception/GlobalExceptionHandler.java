@@ -20,9 +20,9 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(ChefAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleChefAlreadyExists(ChefAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                 "timestamp", LocalDateTime.now().toString(),
-                "status", HttpStatus.CONFLICT,
+                "status", HttpStatus.BAD_REQUEST,
                 "error", "Conflict",
                 "message", ex.getMessage()
         ));
@@ -42,6 +42,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AdminAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleUserAlreadyExists(AdminAlreadyExistsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                    "timestamp", LocalDateTime.now().toString(),
+                    "status", HttpStatus.CONFLICT,
+                    "error", "Conflict",
+                    "message", ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(AdminAlreadyExistsException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(Map.of(

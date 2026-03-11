@@ -10,6 +10,7 @@ import com.airtribe.ShareMyRecipe.exception.verificationtoken.TokenExpiredExcept
 import com.airtribe.ShareMyRecipe.exception.verificationtoken.TokenNotFoundException;
 import com.airtribe.ShareMyRecipe.repository.AbstractUserBaseRepository;
 import com.airtribe.ShareMyRecipe.repository.VerificationTokenRepository;
+import com.airtribe.ShareMyRecipe.service.emailservice.EmailService;
 import com.airtribe.ShareMyRecipe.util.VerificationTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ import java.util.Optional;
 
 @Service
 public class VerificationTokenService {
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private VerificationTokenRepository _verificationTokenRepo;
@@ -38,6 +42,11 @@ public class VerificationTokenService {
         VerificationToken savedToken = _verificationTokenRepo.save(token);
         String url = VerificationTokenUtil.generateUrl(savedToken.getToken());
         System.out.println("Please verify it your email: "+url+"\n Before: "+savedToken.getExpirationDate().getHour()+" Hours");
+        emailService.sendEmail(new String[]{user.get().getEmail()},
+                "Verify Your Email",
+                "Please verify it your email: "+url+
+                        "\n Before: "+savedToken.getExpirationDate().getHour()+
+                        " Hours. Or use this token: " +savedToken.getToken()+ " to verify through API");
     }
 
     public AbstractUserBase validateToken(String token) throws TokenNotFoundException, TokenExpiredException, UserNotFoundException{
