@@ -9,6 +9,7 @@ import com.airtribe.ShareMyRecipe.exception.RecipeNotFoundException;
 import com.airtribe.ShareMyRecipe.service.RecipeManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class RecipeController {
     @Autowired
     private RecipeManagementService recipeManagementService;
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/chef/assign")
     public Recipe assignRecipeToChef(@RequestParam("chefId") Long chefId,
                                         @RequestParam("recipeId") Long recipeId) throws ChefNotFoundException, RecipeNotFoundException {

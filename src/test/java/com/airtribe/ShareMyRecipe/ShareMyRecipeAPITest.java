@@ -1,6 +1,7 @@
 package com.airtribe.ShareMyRecipe;
 
 import com.airtribe.ShareMyRecipe.dto.chef.request.ChefLoginDto;
+import com.airtribe.ShareMyRecipe.dto.chef.response.ChefWithoutRecipeDto;
 import com.airtribe.ShareMyRecipe.entity.AbstractUserBase;
 import com.airtribe.ShareMyRecipe.entity.Chef;
 import com.airtribe.ShareMyRecipe.entity.Recipe;
@@ -9,6 +10,7 @@ import com.airtribe.ShareMyRecipe.repository.ChefRepository;
 import com.airtribe.ShareMyRecipe.repository.RecipeRepository;
 import com.airtribe.ShareMyRecipe.service.ChefManagementService;
 import com.airtribe.ShareMyRecipe.service.emailservice.EmailServiceImpl;
+import jdk.jfr.ContentType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,7 +23,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.swing.text.AbstractDocument;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -71,6 +76,27 @@ public class ShareMyRecipeAPITest {
                         .header("Authorization", "bearer "+token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(contentBody)).andExpect(status().isCreated());
+
+    }
+
+    @Test
+    public void getChefByIdTestSuccess() throws Exception {
+        // Arrange
+        Chef chef = new Chef();
+        chef.setChefName("Jhon Doe");
+        chef.setChefHandle("jhon@12");
+        chef.setEmail("jhon@domain.com");
+        chef.setRecipes(null);
+        chef.setPassword(passwordEncoder.encode("faiSAL@12"));
+        chef.setRole(Role.CHEF);
+        chef.setEnabled(true);
+        Chef savedChef = _chefRepository.save(chef);
+        String token = chefManagementService.login(new ChefLoginDto("jhon@domain.com", "faiSAL@12"));
+        // Act & Assert
+        mockMvc.perform(MockMvcRequestBuilders.get("/chefs/{chefId}", savedChef.getUserId())
+                        .header("Authorization", "bearer "+token)
+                ).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
     }
 

@@ -68,7 +68,7 @@ public class ChefV1Controller {
 
     @GetMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
-    public PageResponse<Chef> getAllChefs(
+    public PageResponse<ChefDto> getAllChefs(
             @RequestParam(value = "pageNo", defaultValue = "0") int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(value = "sortBy", defaultValue = "userId") String sortBy,
