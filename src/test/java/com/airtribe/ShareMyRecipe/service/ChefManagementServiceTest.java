@@ -1,5 +1,6 @@
 package com.airtribe.ShareMyRecipe.service;
 
+import com.airtribe.ShareMyRecipe.dto.chef.response.ChefDto;
 import com.airtribe.ShareMyRecipe.entity.Chef;
 import com.airtribe.ShareMyRecipe.entity.Role;
 import com.airtribe.ShareMyRecipe.exception.chef.ChefNotFoundException;
@@ -12,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,7 +37,7 @@ public class ChefManagementServiceTest {
         chef.setUserId(1L);
         chef.setChefHandle("jhon@12");
         chef.setEmail("jhon@domain.com");
-        chef.setRecipes(null);
+        chef.setRecipes(new ArrayList<>());
         chef.setPassword("faiSAL@12");
         chef.setRole(Role.CHEF);
     }
@@ -45,7 +47,7 @@ public class ChefManagementServiceTest {
         when(_chefRepository
                 .save(chef)).thenReturn(chef);
         // Act
-        Chef resultChef = _chefManagementService.createChef(chef);
+        ChefDto resultChef = _chefManagementService.createChef(chef);
         // Assert
         assertEquals(chef.getChefName(), resultChef.getChefName());
         assertEquals(chef.getEmail(), resultChef.getEmail());
@@ -57,7 +59,7 @@ public class ChefManagementServiceTest {
         // Arrange
         when(_chefRepository.findById(1L)).thenReturn(Optional.of(chef));
         // Act
-        Chef resultChef = null;
+        ChefDto resultChef = null;
         try{
             resultChef = _chefManagementService.getChefById(1L);
         }catch (ChefNotFoundException e){

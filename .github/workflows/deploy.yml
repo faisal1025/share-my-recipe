@@ -45,6 +45,7 @@ jobs:
             
             docker run -d --restart unless-stopped -p 127.0.0.1:${{ secrets.SERVER_PORT }}:${{ secrets.DOCKER_PORT }} \
             -e APP_PORT=${{ secrets.DOCKER_PORT }} \
+            -e SERVER_URL=${{ secrets.SERVER_URL }} \
             -e DB_URL=${{ secrets.DB_URL }} \
             -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \

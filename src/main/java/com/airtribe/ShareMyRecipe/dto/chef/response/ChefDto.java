@@ -1,6 +1,7 @@
 package com.airtribe.ShareMyRecipe.dto.chef.response;
 
 import com.airtribe.ShareMyRecipe.dto.UserBaseResponseDto;
+import com.airtribe.ShareMyRecipe.dto.recipe.response.RecipeWithoutChefDto;
 import com.airtribe.ShareMyRecipe.entity.Recipe;
 import com.airtribe.ShareMyRecipe.entity.Role;
 
@@ -13,7 +14,7 @@ public class ChefDto extends UserBaseResponseDto {
 
     private String chefHandle;
 
-    private List<Recipe> recipes;
+    private List<RecipeWithoutChefDto> recipes = new ArrayList<>();
 
     public ChefDto() {}
 
@@ -31,7 +32,7 @@ public class ChefDto extends UserBaseResponseDto {
         private String email;
         private boolean isEnabled;
         private Role role = Role.CHEF;
-        private List<Recipe> recipes = new ArrayList<>();
+        private List<RecipeWithoutChefDto> recipes = new ArrayList<>();
 
         public ChefBuilder setChefId(Long chefId) {
             this.chefId = chefId;
@@ -63,7 +64,7 @@ public class ChefDto extends UserBaseResponseDto {
             return this;
         }
 
-        public ChefBuilder setRecipes(List<Recipe> recipes) {
+        public ChefBuilder setRecipes(List<RecipeWithoutChefDto> recipes) {
             this.recipes = recipes;
             return this;
         }
@@ -89,11 +90,11 @@ public class ChefDto extends UserBaseResponseDto {
         this.chefHandle = chefHandle;
     }
 
-    public List<Recipe> getRecipes() {
+    public List<RecipeWithoutChefDto> getRecipes() {
         return recipes;
     }
 
-    public void setRecipes(List<Recipe> recipes) {
+    public void setRecipes(List<RecipeWithoutChefDto> recipes) {
         this.recipes = recipes;
     }
 }

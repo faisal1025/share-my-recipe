@@ -1,12 +1,15 @@
 package com.airtribe.ShareMyRecipe.controller;
 
 
+import com.airtribe.ShareMyRecipe.dto.chef.response.ChefDto;
+import com.airtribe.ShareMyRecipe.dto.chef.response.ChefWithoutRecipeDto;
 import com.airtribe.ShareMyRecipe.entity.Chef;
 import com.airtribe.ShareMyRecipe.exception.chef.ChefNotFoundException;
 import com.airtribe.ShareMyRecipe.service.ChefManagementService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,23 +23,30 @@ public class ChefController {
     private ChefManagementService chefService;
 
     // Jackson -> used for serialization and deserialization of JSON
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/chefs")
-    public Chef createChef(@Valid @RequestBody Chef chef) {
+    public ChefDto createChef(@Valid @RequestBody Chef chef) {
         return chefService.createChef(chef);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CHEF')")
     @DeleteMapping("/chefs/{id}")
     public ResponseEntity<String> deleteChef(@PathVariable("id") Long chefId) throws ChefNotFoundException{
-
-        Chef chef = chefService.getChefById(chefId);
-        chefService.deleteChef(chef);
+        chefService.deleteChef(chefId);
         return ResponseEntity.status(200).body("Chef with id " + chefId + " deleted successfully.");
     }
 
+    @GetMapping("/chefs/{id}")
+    public ResponseEntity<ChefDto> getChefById(@PathVariable("id") Long chefId) throws ChefNotFoundException{
+
+        ChefDto chef = chefService.getChefById(chefId);
+        return ResponseEntity.status(200).body(chef);
+    }
+
     @GetMapping("/chefs")
-    public List<Chef> getAllChefs(@RequestParam(value = "id", required = false) Long id,
+    public List<ChefDto> getAllChefs(@RequestParam(value = "id", required = false) Long id,
                                   @RequestParam(value = "name", required = false) String name) throws ChefNotFoundException {
-        List<Chef> chefs = new ArrayList<>();
+        List<ChefDto> chefs = new ArrayList<>();
         if(id == null && name == null) {
             chefs.addAll(chefService.getAllChefs());
         }else if(id != null && name == null) {

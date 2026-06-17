@@ -1,5 +1,6 @@
 package com.airtribe.ShareMyRecipe.repository;
 
+import com.airtribe.ShareMyRecipe.dto.chef.response.ChefDto;
 import com.airtribe.ShareMyRecipe.entity.Chef;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

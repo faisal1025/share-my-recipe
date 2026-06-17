@@ -5,6 +5,8 @@ import com.airtribe.ShareMyRecipe.dto.chef.request.ChefLoginDto;
 import com.airtribe.ShareMyRecipe.dto.chef.request.ChefRegistrationDto;
 import com.airtribe.ShareMyRecipe.dto.chef.response.ChefDto;
 import com.airtribe.ShareMyRecipe.dto.PageResponse;
+import com.airtribe.ShareMyRecipe.dto.chef.response.ChefWithoutRecipeDto;
+import com.airtribe.ShareMyRecipe.dto.recipe.response.RecipeWithoutChefDto;
 import com.airtribe.ShareMyRecipe.entity.Chef;
 import com.airtribe.ShareMyRecipe.entity.Role;
 import com.airtribe.ShareMyRecipe.exception.chef.ChefAlreadyExistsException;
@@ -65,12 +67,7 @@ public class ChefManagementService {
                 new ArrayList<>()
         );
         Chef savedChef = _chefRepository.save(chef);
-        return new ChefDto.ChefBuilder()
-                .setChefId(savedChef.getUserId())
-                .setChefName(savedChef.getChefName())
-                .setChefHandle(savedChef.getChefHandle())
-                .setEmail(savedChef.getEmail())
-                .build();
+        return mapChefToChefDto(savedChef);
     }
 
     public String login(ChefLoginDto chefLoginDto) throws ChefNotFoundException, AuthenticationException {
@@ -87,34 +84,42 @@ public class ChefManagementService {
         return jwtTokenUtil.generateToken(userDetails);
     }
 
-    public Chef createChef(Chef chef) {
-        return _chefRepository.save(chef);
+    public ChefDto createChef(Chef chef) {
+        Chef savedChef = _chefRepository.save(chef);
+        return mapChefToChefDto(savedChef);
     }
 
-    public List<Chef> getAllChefs() {
-        return _chefRepository.findAll();
+    public List<ChefDto> getAllChefs() {
+        List<Chef> chefs = _chefRepository.findAll();
+        return chefs.stream().map(this::mapChefToChefDto).toList();
     }
 
-    public Chef getChefById(Long id) throws ChefNotFoundException {
+    public ChefDto getChefById(Long id) throws ChefNotFoundException {
         if(_chefRepository.findById(id).isPresent()){
-            return _chefRepository.findById(id).get();
+            Chef chef = _chefRepository.findById(id).get();
+            return mapChefToChefDto(chef);
         }
         throw new ChefNotFoundException("Chef not found with id: " + id);
     }
 
-    public List<Chef> getChefByName(String name) {
-        return _chefRepository.findByName(name);
+    public List<ChefDto> getChefByName(String name) {
+        List<Chef> chefs = _chefRepository.findByName(name);
+        return chefs.stream().map(this::mapChefToChefDto).toList();
     }
 
-    public void deleteChef(Chef chef) {
-        _chefRepository.delete(chef);
+    public void deleteChef(Long chefId) throws ChefNotFoundException{
+        Optional<Chef> chef = _chefRepository.findById(chefId);
+        if(chef.isEmpty()){
+            throw new ChefNotFoundException("Chef not found with Chef Id: "+chefId);
+        }
+        _chefRepository.delete(chef.get());
     }
 
-    public PageResponse<Chef> getPaginatedChefs(int pageNo, int pageSize, String sortBy, Sort.Direction sortDir) {
+    public PageResponse<ChefDto> getPaginatedChefs(int pageNo, int pageSize, String sortBy, Sort.Direction sortDir) {
         Sort sort = Sort.by(sortDir, sortBy);
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Chef> paginatedChef = _chefRepository.findAll(pageable);
-        return new PageResponse<Chef> (
+        Page<ChefDto> paginatedChef = _chefRepository.findAll(pageable).map(this::mapChefToChefDtoWithoutRecipe);
+        return new PageResponse<ChefDto> (
                 paginatedChef.getTotalPages(),
                 paginatedChef.isFirst(),
                 paginatedChef.isLast(),
@@ -125,5 +130,24 @@ public class ChefManagementService {
                 paginatedChef.getSize(),
                 paginatedChef.getTotalElements()
         );
+    }
+
+    private ChefDto mapChefToChefDto(Chef chef) {
+        return new ChefDto.ChefBuilder()
+                .setChefId(chef.getUserId())
+                .setChefName(chef.getChefName())
+                .setChefHandle(chef.getChefHandle())
+                .setEmail(chef.getEmail())
+                .setRecipes(chef.getRecipes().stream().map(RecipeWithoutChefDto::new).toList())
+                .build();
+    }
+
+    private ChefDto mapChefToChefDtoWithoutRecipe(Chef chef) {
+        return new ChefDto.ChefBuilder()
+                .setChefId(chef.getUserId())
+                .setChefName(chef.getChefName())
+                .setChefHandle(chef.getChefHandle())
+                .setEmail(chef.getEmail())
+                .build();
     }
 }

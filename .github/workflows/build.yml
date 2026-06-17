@@ -1,6 +1,6 @@
 
 
-name: build gradle application using dockfile
+name: build gradle application using dockerfile
 
 on:
   pull_request:
