@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public class VerificationTokenUtil {
 
-    @Value("${server-url}")
-    private String serverUrl;
+    @Value("${server-url: http://localhost:3056}")
+    private static String serverUrl;
 
     public static VerificationToken generateToken(AbstractUserBase user) {
         VerificationToken returnToken = new VerificationToken();
@@ -19,7 +19,7 @@ public class VerificationTokenUtil {
         return returnToken;
     }
     public static String generateUrl(String token) {
-        String url = "http://127.0.0.1:3056/api/v1/chefs/auth/verify-token?token="+token;
+        String url = serverUrl+"/api/v1/chefs/auth/verify-token?token="+token;
         return url;
     }
 }
